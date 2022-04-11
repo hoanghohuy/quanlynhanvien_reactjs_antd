@@ -2,16 +2,14 @@ import React, { Component, useState } from 'react'
 import 'antd/dist/antd.css'
 import { Card, Form, Input } from 'antd';
 import { Button, Modal, DatePicker, InputNumber, Select, notification } from 'antd';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {QuestionCircleOutlined} from '@ant-design/icons'
 
 const { Option } = Select;
 const layout = {
-    labelCol: {
-        span: 6,
-    },
-    wrapperCol: {
-        span: 16,
-    },
+    labelCol: {span: 6},
+    wrapperCol: {span: 16},
 };
 
 class Add extends Component {
@@ -131,9 +129,7 @@ class Add extends Component {
 
     handleAddOnclickOK = () => {
         if (!this.state.nhanvien.id || !this.state.nhanvien.name ) {
-            notification.open({
-                message: 'Không được bỏ trống các trường bắt buộc!',
-            })
+            toast.warning('Không được bỏ trống các trường bắt buộc!')
             return;
         }
 
@@ -157,21 +153,7 @@ class Add extends Component {
 
             this.props.AddData(newNhanvien)
             this.setState({
-                nhanvien: {
-                    id: '',
-                    key: '',
-                    name: '',
-                    dob: '',
-                    chucvu: '',
-                    gender: '',
-                    address: '',
-                    email: '',
-                    phone: '',
-                    status: ''
-                }
-            })
-            notification.open({
-                message: 'Thêm dữ liệu thành công!',
+                nhanvien: {}
             })
         };
     }

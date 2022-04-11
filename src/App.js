@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import 'antd/dist/antd.css'
-import { Layout, Menu, Breadcrumb, Divider, Table, Button, Modal, notification } from 'antd';
+import { Layout, Menu, Breadcrumb, Divider, Table, Button, Modal, notification, Pagination } from 'antd';
+import { UserOutlined, AndroidOutlined, AlertOutlined, VideoCameraOutlined, UploadOutlined } from "@ant-design/icons";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Add from "./Components/Add";
 import Copy from "./Components/Copy";
 import Delete from "./Components/Delete";
 import Detail from "./Components/Detail";
 import Edit from "./Components/Edit";
 import Search from "./Components/Search";
-import Nhanvien from "./Components/Nhanvien";
-const { Header, Content, Footer } = Layout;
+import Upload from "./Components/Upload";
+import Download from "./Components/Download";
+const { Header, Content, Footer, Sider } = Layout;
 
 const columns = [
   { title: 'Mã nhân viên', dataIndex: 'id' },
@@ -62,6 +66,9 @@ class App extends Component {
         status: "Hoạt động"
       }
     ],
+
+    editNhanVien: {},
+
     selectedRows: [],
     selectedRow: {
       id: '', key: '', name: '', dob: '', chucvu: '', gender: '', address: '', email: '', phone: '', status: ''
@@ -80,14 +87,18 @@ class App extends Component {
 
   showDeleteModal = () => {
     if (this.state.selectedRows.length === 0) {
-      notification.open({
-        message: 'Vui lòng chọn dữ liệu muốn xóa!',
+      toast.warning('Vui lòng chọn dữ liệu muốn xóa!')
+      return;
+    }
+    if (this.state.selectedRows.length === 1) {
+      this.setState({
+        isDeleteModalVisible: true
       })
     }
-    else
-    this.setState({
-      isDeleteModalVisible: true
-    })
+
+    else {
+    toast.warning('Vui lòng chỉ chọn một dòng dữ liệu!')
+    }
   }
 
   handleCancel = () => {
@@ -98,13 +109,6 @@ class App extends Component {
 
   // Xoá nhân viên
   DeleteData = () => {
-    if (this.state.selectedRows.length === 0) {
-      notification.open({
-        message: 'Vui lòng chọn dữ liệu muốn xóa!',
-      })
-    }
-
-    if (this.state.selectedRows.length === 1) {
       const id = this.state.selectedRow.id;
       console.log(id)
       const data = this.state.nhanvien.filter(nv => {
@@ -114,65 +118,105 @@ class App extends Component {
         nhanvien: data,
         isDeleteModalVisible: false,
         selectedRows: []
-        
+
       });
-      notification.open({
-        message: 'Xóa dữ liệu thành công!',
-      })
-
-    }
-    else {
-      notification.open({
-        message: 'Vui lòng chỉ chọn một dòng dữ liệu muốn xóa!',
-      })
-    }
-
+      toast.success('Xóa dữ liệu thành công!')
   }
   // Thêm nhân viên
   AddData = (newNhanvien) => {
+    console.log("truyenqua",newNhanvien)
     this.setState({
-      nhanvien: [...this.state.nhanvien, newNhanvien]
+      nhanvien: [...this.state.nhanvien, newNhanvien],
+      selectedRow: {},
+      selectedRows: []
     })
+    toast.success('Thêm dữ liệu thành công')
+  }
+
+  // Sửa nhân viên
+  EditData = (newNhanvien) => {
+    let {nhanvien} = this.state
+    let isEmptyObj = Object.keys(newNhanvien).length === 0;
+    let nhanvienCopy = [...nhanvien];
+    let objIndex = nhanvienCopy.findIndex((item => item.id === newNhanvien.id ))
+    nhanvienCopy[objIndex] = newNhanvien
+    this.setState({
+      nhanvien: nhanvienCopy
+      })
+    toast.success('Sửa dữ liệu thành công')
   }
 
   render() {
     return (
-      <Layout className="layout">
-        <Header style={{ padding: "0 100px" }}>
-          <div className="logo" />
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['0']}>
-            <Menu.Item key={0}>Quản lý nhân viên</Menu.Item>
-          </Menu>
-        </Header>
-        <Content style={{ padding: '0 100px', height: '85vh' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Quản lý nhân viên</Breadcrumb.Item>
-            <Breadcrumb.Item>Nhân viên</Breadcrumb.Item>
-          </Breadcrumb>
-          <Divider orientation="left"></Divider>
-          <Search />
-          <Add AddData={this.AddData} />
-          <Copy />
-          <Detail selectedRow={this.state.selectedRow} selectedRows={this.state.selectedRows} />
-          <Edit />
+      <>
+        <Layout>
+          <Header style={{ padding: "0 200px" }}>
+            <div className="logo" />
+            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+              <Menu.Item key={0}><AndroidOutlined />  Hệ thống</Menu.Item>
+              <Menu.Item key={1}> <UserOutlined /> Nhân sự</Menu.Item>
+              <Menu.Item key={2}> <AlertOutlined /> Nhà hàng</Menu.Item>
+            </Menu>
+          </Header>
+        </Layout>
+        <Layout>
+          <Sider>
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
+              <Menu.Item key="1" icon={<UserOutlined />}>
+                nav 1
+              </Menu.Item>
+              <Menu.Item key="2" icon={<VideoCameraOutlined />}>
+                nav 2
+              </Menu.Item>
+              <Menu.Item key="3" icon={<UploadOutlined />}>
+                nav 3
+              </Menu.Item>
+              <Menu.Item key="4" icon={<UserOutlined />}>
+                Nhân viên
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          <Layout className="layout">
 
-          <Button style={{ marginRight: "10px" }} onClick={this.showDeleteModal} type="primary" size='large'>Xóa</Button>
+            <Content style={{ padding: '0 100px', height: '86vh' }}>
+              <Breadcrumb style={{ margin: '16px 0' }}>
+                <Breadcrumb.Item>Quản lý nhân viên</Breadcrumb.Item>
+                <Breadcrumb.Item>Nhân viên</Breadcrumb.Item>
+              </Breadcrumb>
+              <Search />
+              <Add AddData={this.AddData} />
+              <Copy selectedRow={this.state.selectedRow} selectedRows={this.state.selectedRows} AddData={this.AddData} />
+              <Detail selectedRow={this.state.selectedRow} selectedRows={this.state.selectedRows} AddData = {this.AddData} />
+              <Edit selectedRow={this.state.selectedRow} selectedRows={this.state.selectedRows} EditData={this.EditData} />
 
-          <Modal title="Xác nhận xóa" visible={this.state.isDeleteModalVisible} onOk={this.DeleteData} onCancel={this.handleCancel}>
-            <p>Bạn có chắc chắc muốn xóa dữ liệu?</p>
-          </Modal>
+              <Button style={{ marginRight: "10px" }} onClick={this.showDeleteModal} type="primary" size='large'>Xóa</Button>
 
-          <Table
-            rowSelection={{
-              type: 'checkbox',
-              onChange: this.onSelectedChange
-            }}
-            columns={columns}
-            dataSource={this.state.nhanvien} />
+              <Modal title="Xác nhận xóa" visible={this.state.isDeleteModalVisible} onOk={this.DeleteData} onCancel={this.handleCancel}>
+                <p>Bạn có chắc chắc muốn xóa dữ liệu?</p>
+              </Modal>
+              <Upload />
+              <Download />
+              <Table style={{ marginTop: '10px' }} rowSelection={{ type: 'checkbox', onChange: this.onSelectedChange }}
+                columns={columns}
+                bordered
+                dataSource={this.state.nhanvien} />
+            </Content>
+            <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+          </Layout>
+        </Layout>
 
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-      </Layout>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </>
 
     );
   }

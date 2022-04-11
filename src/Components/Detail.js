@@ -1,9 +1,9 @@
 import React, { Component, useState } from 'react'
 import 'antd/dist/antd.css'
-import { Card, Form, Input } from 'antd';
-import { Button, Modal, DatePicker, InputNumber, Select, notification } from 'antd';
+import { Button, Modal, DatePicker, InputNumber, Select, notification, Card, Form, Input } from 'antd';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import moment from 'moment';
 const { Option } = Select;
 const layout = {
     labelCol: {
@@ -30,17 +30,19 @@ class Detail extends Component {
         }
         else {
             if (this.props.selectedRows.length === 0) {
-                notification.open({
-                    message: 'Vui lòng chọn dòng dữ liệu để xem!',
-                })
+                toast.warning('Vui lòng chọn dòng dữ liệu để xem!')
             }
             else {
-                notification.open({
-                    message: 'Vui lòng chỉ chọn một dòng dữ liệu',
-                });
+                toast.warning('Vui lòng chỉ chọn một dòng dữ liệu!')
             }
         }
     };
+
+    handleOK = () => {
+        this.setState({
+            isModalVisible: false
+        })
+    }
 
     handleCancel = () => {
         this.setState({
@@ -63,7 +65,7 @@ class Detail extends Component {
         return (
             <>
                 <Button style={{ marginRight: "10px" }} type="primary" onClick={this.showDetailModal} size='large'>Xem</Button>
-                <Modal title="Xem thông tin nhân viên" visible={this.state.isModalVisible} onOk={this.handleAddOnclickOK} onCancel={this.handleCancel} width={1200}>
+                <Modal title="Xem thông tin nhân viên" visible={this.state.isModalVisible} onOk={this.handleOK} onCancel={this.handleCancel} width={1200}>
                     <Card style={{ width: '100%' }} tabList={this.tabList} activeTabKey={this.activeTabKey1} >
                         <Form {...layout} name="nest-messages" style={{ display: 'flex', width: "100%", flexWrap: "wrap" }} >
                             <Form.Item style={{ width: '50%', float: 'left' }}
