@@ -1,15 +1,15 @@
-import React, { Component, useState } from 'react'
+import React, { Component} from 'react'
 import 'antd/dist/antd.css'
-import { Card, Form, Input } from 'antd';
-import { Button, Modal, DatePicker, InputNumber, Select, notification } from 'antd';
+import { Button, Modal, DatePicker, InputNumber, Select, Card, Form, Input, notification,Tabs } from 'antd';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {QuestionCircleOutlined} from '@ant-design/icons'
-
+import { QuestionCircleOutlined } from '@ant-design/icons'
+const {TabPane} = Tabs;
 const { Option } = Select;
+const { TextArea } = Input;
 const layout = {
-    labelCol: {span: 6},
-    wrapperCol: {span: 16},
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
 };
 
 class Add extends Component {
@@ -112,7 +112,7 @@ class Add extends Component {
 
     handlePhoneChange = (e) => {
         const nhanvien = this.state;
-        nhanvien.phone = e;
+        nhanvien.phone = e.target.value;
         this.setState({
             nhanvien
         })
@@ -128,7 +128,7 @@ class Add extends Component {
     // Handle Thêm Nhân Viên
 
     handleAddOnclickOK = () => {
-        if (!this.state.nhanvien.id || !this.state.nhanvien.name ) {
+        if (!this.state.nhanvien.id || !this.state.nhanvien.name) {
             toast.warning('Không được bỏ trống các trường bắt buộc!')
             return;
         }
@@ -166,8 +166,10 @@ class Add extends Component {
             <>
                 <Button style={{ marginRight: "10px" }} type="primary" onClick={this.showModal} size='large'>Thêm mới</Button>
                 <Modal title="Thêm mới nhân viên" visible={this.state.isModalVisible} onOk={this.handleAddOnclickOK} onCancel={this.handleCancel} width={1200}>
-                    <Card style={{ width: '100%' }} tabList={this.tabList} activeTabKey={this.activeTabKey1} >
-                        <Form {...layout} name="nest-messages" style={{ display: 'flex', width: "100%", flexWrap: "wrap" }} >
+                    <Tabs defaultActiveKey="1">
+                        <TabPane tab="Thêm mới nhân viên" key="1">
+                        <Card style={{ width: '100%' }} >
+                        <Form {...layout} name="nest-messages" style={{ display: 'flex', width: "100%", flexWrap: "wrap", textAlign: 'left' }} >
                             <Form.Item style={{ width: '50%', float: 'left' }}
                                 name='id'
                                 key='id'
@@ -185,10 +187,10 @@ class Add extends Component {
                                 <Input required size="large" onChange={this.handleNameChange} />
                             </Form.Item>
 
-                            <Form.Item style={{ width: '50%' }}
+                            <Form.Item style={{ width: '50%'}}
                                 name="birthday"
                                 label="Ngày sinh">
-                                <DatePicker size="large" style={{ width: '100%' }} onChange={this.handleBirthdayChange} />
+                                <DatePicker size="large" style={{ width: '100%', textAlign: 'left' }} onChange={this.handleBirthdayChange} />
                             </Form.Item>
 
                             <Form.Item style={{ width: '50%' }}
@@ -218,11 +220,8 @@ class Add extends Component {
                                 <Input size="large" onChange={this.handleEmailChange} />
                             </Form.Item>
 
-                            <Form.Item style={{ width: '50%' }}
-                                name='phone'
-                                label="Số điện thoại"
-                            >
-                                <InputNumber size="large" style={{ width: '100%' }} onChange={this.handlePhoneChange} />
+                            <Form.Item style={{ width: '50%' }} name='phone' label="Số điện thoại">
+                                <Input type='number' size="large" style={{ width: '100%' }} onChange={this.handlePhoneChange} />
                             </Form.Item>
 
                             <Form.Item style={{ width: '50%' }}
@@ -234,6 +233,29 @@ class Add extends Component {
                             </Form.Item>
                         </Form>
                     </Card>
+                        </TabPane>
+                        <TabPane tab="Thông tin tài khoản ngân hàng" key="2">
+                        <Card style={{ width: '100%' }} >
+                        <Form {...layout} name="nest-messages" style={{ display: 'flex', width: "100%", flexWrap: "wrap" }} >
+                            <Form.Item style={{ width: '50%' }} name='address' label="Tên ngân hàng">
+                                <Input size="large" onChange={this.handleAddressChange} />
+                            </Form.Item>
+                            <Form.Item style={{ width: '50%' }} name='address' label="Chi nhánh">
+                                <Input size="large" onChange={this.handleAddressChange} />
+                            </Form.Item>
+                            <Form.Item style={{ width: '50%' }} name='address' label="Số tài khoản">
+                                <Input size="large" onChange={this.handleAddressChange} />
+                            </Form.Item>
+                            <Form.Item style={{ width: '50%' }} name='address' label="Chi nhánh">
+                                <Input size="large" onChange={this.handleAddressChange} />
+                            </Form.Item>
+                            <TextArea rows={4} />
+                        </Form>
+                    </Card>
+                        </TabPane>
+                    </Tabs>
+
+                    
                 </Modal>
             </>
         )
